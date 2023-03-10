@@ -1,0 +1,10 @@
+@use './lib' as lib;
+
+@import './common';
+
+$color: #f0f;
+
+a {
+  @include lib.set-background(blue);
+  color: $color;
+}
