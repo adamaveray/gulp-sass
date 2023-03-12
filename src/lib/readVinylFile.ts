@@ -1,4 +1,4 @@
-import Vinyl from 'vinyl';
+import type Vinyl from 'vinyl';
 
 async function readStream(stream: NodeJS.ReadableStream): Promise<Buffer> {
   const chunks: Buffer[] = [];
@@ -24,7 +24,7 @@ export default async function readVinylFile(file: Vinyl): Promise<Buffer | undef
     return file.contents;
   }
   if (file.isStream()) {
-    return await readStream(file.contents);
+    return readStream(file.contents);
   }
   return undefined;
 }

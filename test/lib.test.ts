@@ -1,4 +1,5 @@
 import { PassThrough } from 'node:stream';
+
 import Vinyl from 'vinyl';
 
 import { name as packageName } from '../package.json';
@@ -25,7 +26,7 @@ describe('lib', () => {
       const stream = new PassThrough();
       setTimeout(() => {
         // Write to stream word-by-word
-        for (const part of fileContent.split(/\b/g)) {
+        for (const part of fileContent.split(/\b/u)) {
           stream.write(part);
         }
         stream.end();

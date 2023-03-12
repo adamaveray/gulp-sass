@@ -1,9 +1,10 @@
 import { Transform } from 'node:stream';
 import { pathToFileURL } from 'node:url';
+
 import * as logger from 'gulplog';
 import * as sass from 'sass-embedded';
-import type { CompileResult, StringOptions, Syntax } from 'sass-embedded';
-import { RawSourceMap } from 'source-map-js';
+import { type CompileResult, type StringOptions, type Syntax } from 'sass-embedded';
+import { type RawSourceMap } from 'source-map-js';
 import type Vinyl from 'vinyl';
 import applySourceMap from 'vinyl-sourcemaps-apply';
 
@@ -57,7 +58,7 @@ async function compileSass(
   return result;
 }
 
-export default function gulpSass(options: SassOptions = {}) {
+export default function gulpSass(options: SassOptions = {}): Transform {
   return new Transform({
     objectMode: true,
     async transform(file: Vinyl, encoding, callback): Promise<void> {
@@ -88,7 +89,10 @@ export default function gulpSass(options: SassOptions = {}) {
       newFile.extname = '.css';
       if (newFile.stat != null) {
         // Update modification time
-        newFile.stat.atime = newFile.stat.mtime = newFile.stat.ctime = new Date();
+        const now = new Date();
+        newFile.stat.atime = now;
+        newFile.stat.mtime = now;
+        newFile.stat.ctime = now;
       }
       if (sourceMap != null) {
         applySourceMap(newFile, sourceMap);

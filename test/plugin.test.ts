@@ -1,12 +1,13 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { relative } from 'node:path';
 import { cwd } from 'node:process';
-import type { Transform } from 'node:stream';
+import { type Transform } from 'node:stream';
+
 import * as sass from 'sass-embedded';
+import { type RawSourceMap } from 'source-map-js';
 import Vinyl from 'vinyl';
 
 import gulpSass, { sass as sassReexported } from '../src';
-import { RawSourceMap } from 'source-map-js';
 import PluginError from '../src/lib/PluginError';
 
 const resourcesDir = `${cwd()}/test/__resources__`;
@@ -110,13 +111,13 @@ a {
   });
 
   it('supports custom functions', async () => {
-    // language=SCSS
+    // Language=SCSS
     const inputScss = `
 div {
   width: pow(10, 3) * 1px;
 }
 `.trim();
-    // language=CSS
+    // Language=CSS
     const outputCss = `
 div {
   width: 1000px;
@@ -125,10 +126,11 @@ div {
 
     const stream = gulpSass({
       functions: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention -- Sass syntax
         'pow($base, $exponent)': (args) => {
           const base = args[0]?.assertNumber('base').assertNoUnits('base');
           const exponent = args[1]?.assertNumber('exponent').assertNoUnits('exponent');
-          return new sass.SassNumber(Math.pow(base?.value ?? 0, exponent?.value ?? 0));
+          return new sass.SassNumber((base?.value ?? 0) ** (exponent?.value ?? 0));
         },
       },
     });
