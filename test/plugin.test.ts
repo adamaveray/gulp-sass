@@ -108,4 +108,39 @@ a {
 
     await expect(readStream<VinylWithSourceMap>(stream)).rejects.toThrowError(PluginError);
   });
+
+  it('supports custom functions', async () => {
+    // language=SCSS
+    const inputScss = `
+div {
+  width: pow(10, 3) * 1px;
+}
+`.trim();
+    // language=CSS
+    const outputCss = `
+div {
+  width: 1000px;
+}
+`.trim();
+
+    const stream = gulpSass({
+      functions: {
+        'pow($base, $exponent)': (args) => {
+          const base = args[0]?.assertNumber('base').assertNoUnits('base');
+          const exponent = args[1]?.assertNumber('exponent').assertNoUnits('exponent');
+          return new sass.SassNumber(Math.pow(base?.value ?? 0, exponent?.value ?? 0));
+        },
+      },
+    });
+
+    const inputFile = new Vinyl();
+    inputFile.path = '/dev/null/test.scss';
+    inputFile.contents = Buffer.from(inputScss, 'utf8');
+
+    stream.write(inputFile);
+    stream.end();
+
+    const [outputFile] = await readStream<VinylWithSourceMap>(stream);
+    expect(outputFile?.contents?.toString('utf8')).toEqual(outputCss);
+  });
 });
