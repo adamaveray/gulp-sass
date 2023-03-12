@@ -1,5 +1,4 @@
-import { makeEslintConfig } from '@averay/codeformat';
-import globals from 'globals';
+import { makeEslintConfig, globals } from '@averay/codeformat';
 
 export default [
   {
