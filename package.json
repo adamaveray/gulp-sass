@@ -42,7 +42,15 @@
     "collectCoverageFrom": [
       "src/**/*.ts"
     ],
-    "coverageDirectory": "coverage"
+    "coverageDirectory": "coverage",
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    }
   },
   "dependencies": {
     "sass-embedded": "^1.59.2",
